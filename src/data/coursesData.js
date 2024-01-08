@@ -766,7 +766,6 @@ export default function CoursesData( item, academyAddress ) {
     handlePdf,
     // Loader states
   
-    isLoadingPayment,
     isLoadingEnroll,
     isLoadingWithdraw,
     isLoadingSponsor,
