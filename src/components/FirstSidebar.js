@@ -37,7 +37,6 @@ import { styled } from '@mui/material/styles';
 import { deepPurple } from '@mui/material/colors';
 import Tooltip from '@mui/material/Tooltip';
 
-
 const StyledAvatar = styled(Avatar)`
   ${({ theme }) => `
   cursor: pointer;
@@ -78,7 +77,7 @@ export default function FirstSidebar() {
       case '/report':
           setIndex(4);
           break;           
-      case '/profile':
+      case '/review':
         setIndex(5);
         break;
       default:
@@ -132,7 +131,7 @@ export default function FirstSidebar() {
       >
         <i data-feather="arrow-left" />
       </IconButton>
-      <Avatar src="https://github.com/Peace-Antz/academyv2/blob/2421cbb0800acc1e9ae0a02f106a9cd0de229202/src/assets/images/peaceantz%20square%20small.png?raw=true" />
+      <Avatar src={PeaceAntzLogo}  />
       <List sx={{ '--ListItem-radius': '8px', '--List-gap': '12px' }}>
       <ListItem>
           <ListItemButton selected={index === 0} onClick={() => setIndex(0)} component={Link} to="/hero">
