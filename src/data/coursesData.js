@@ -292,23 +292,29 @@ export default function CoursesData( item, academyAddress ) {
     }, [studentAddress]);
   
     useEffect(() => {
-        const fetchBalance = async () => {
-            try {
-                const web3 = new Web3(Web3.givenProvider || "https://peace-antz-academy.infura-ipfs.io");
-                if (web3.utils.isAddress(item?.data?.courseId)) {
-                    const contractBalance = await web3.eth.getBalance(item?.data?.courseId);
-                    console.log("Raw Balance in Wei:", contractBalance); 
-                    setBalance(web3.utils.fromWei(contractBalance, 'ether'));
-                } else {
-                    console.error(`Invalid address: ${item?.data?.courseId}`);
-                }
-            } catch (error) {
-                console.error(`Error fetching balance for address ${item?.data?.courseId}:`, error);
-            }
-        };
-      
-        fetchBalance(item?.data?.courseId);
-    }, [item?.data?.courseId, courseCompletedEvents, enrolledEvents, roleRevokedEvents, dropoutEvents]);
+      const fetchBalance = async () => {
+          try {
+              const web3 = new Web3(Web3.givenProvider || "https://polygon-mainnet.infura.io/v3/2QmAL33s4txhYx8xz1eAVCpRtcm");
+              // Define a regex pattern to validate an Ethereum address
+              const addressPattern = /^0x[a-fA-F0-9]{40}$/;
+              const courseId = item?.data?.courseId;
+              
+              if (courseId && addressPattern.test(courseId)) {
+                  const contractBalance = await web3.eth.getBalance(courseId);
+                  console.log("Raw Balance in Wei:", contractBalance); 
+                  setBalance(web3.utils.fromWei(contractBalance, 'ether'));
+              } else {
+                  console.error(`Invalid address: ${courseId}`);
+              }
+          } catch (error) {
+              console.error(`Error fetching balance for address ${item?.data?.courseId}:`, error);
+          }
+      };
+    
+      if (item?.data?.courseId) {
+          fetchBalance();
+      }
+  }, [item?.data?.courseId, courseCompletedEvents, enrolledEvents, roleRevokedEvents, dropoutEvents]);
     
   
 

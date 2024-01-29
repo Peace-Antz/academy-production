@@ -605,6 +605,19 @@ function StudentEvaluationModal({
   );
 }
 
+const formatBalance = (balance) => {
+  const num = parseFloat(balance);
+  if (isNaN(num)) return '0'; // or any default value you prefer
+
+  // Check if the number is an integer
+  if (Number.isInteger(num)) {
+    return num.toString();
+  } 
+
+  // If not an integer, round to two decimal places
+  return num.toFixed(2);
+};
+
   
   if (teacherAddress === '0x0000000000000000000000000000000000000000') {
     return (
@@ -1094,7 +1107,7 @@ function StudentEvaluationModal({
               padding: '0.25rem 0.5rem', // Adjust the padding as needed
             },
           },
-          `Contract Balance: ${balance}`
+          `Contract Balance: ${formatBalance(balance)} MATIC`
         ),
         ),
         React.createElement(
