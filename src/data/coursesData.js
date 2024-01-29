@@ -2,9 +2,11 @@ import { useContract, useContractRead, useContractWrite, useContractEvents, useS
 import { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import { ethers } from "ethers";
+import { useErrorModal } from "../utils/ErrorModalContext";
 
 //Course Contract functions
 export default function CoursesData( item, academyAddress ) {
+    const { showErrorModal } = useErrorModal();
 
     //This uses the contract of each separate course
     console.log("First Item ", item);
@@ -468,8 +470,6 @@ export default function CoursesData( item, academyAddress ) {
         return courseInfo;
       } catch (error) {
         console.error("Failed to upload file:", error);
-        setErrorMessage(error.message); // set error message
-        setIsModalOpen(true); // open error modal
       }
     };
     
@@ -483,8 +483,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -504,8 +503,7 @@ export default function CoursesData( item, academyAddress ) {
           } else {
               errorReason = err.message;
           }
-          setErrorMessage(errorReason);
-        setIsModalOpen(true);
+          showErrorModal(errorReason); 
           return;
         }
       
@@ -527,8 +525,7 @@ export default function CoursesData( item, academyAddress ) {
           } else {
               errorReason = err.message;
           }
-          setErrorMessage(errorReason);
-        setIsModalOpen(true);
+          showErrorModal(errorReason); 
       }
     };
     
@@ -545,8 +542,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (error) {
         console.error("contract call failure", error);
         const errorReason = error.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -563,8 +559,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -575,8 +570,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -588,8 +582,11 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        console.log("errorReason", errorReason);
+
+        // Log to check if showErrorModal is a function
+        console.log("showErrorModal is a function:", typeof showErrorModal === "function");
+        showErrorModal(errorReason); 
       }
     }
   
@@ -600,8 +597,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
     
@@ -613,8 +609,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -626,8 +621,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -638,8 +632,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -668,8 +661,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   

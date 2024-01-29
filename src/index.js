@@ -5,14 +5,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { StyledEngineProvider } from '@mui/joy/styles';
-import { Polygon } from "@thirdweb-dev/chains";
+import { Polygon } from "@thirdweb-dev/chains"; //Also in CourseCard.js & HeaderSection.js (update both when adding more chains)
 import process from 'process';
 import { Buffer } from 'buffer';
 
 window.Buffer = Buffer;
 window.process = process;
 
-const activeChain = Polygon;
+const activeChain = Polygon; //Also in CourseCard.js & HeaderSection.js (update both when adding more chains)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -31,7 +31,8 @@ import { styled } from '@mui/joy';
 import { MediaRenderer } from "@thirdweb-dev/react";
 import TextField from '@mui/material/TextField';
 import Badge from '@mui/joy/Badge';
-
+import {  useChainId } from "@thirdweb-dev/react";
+import { Polygon } from "@thirdweb-dev/chains";
 
 
 
@@ -50,6 +51,14 @@ export default function CourseCard({
    liked = false,
    thumbnail = null,
 }) {
+  
+  const chainId = useChainId();
+  const activeChain = Polygon;
+  const isDisabled = chainId !== activeChain.chainId;
+  
+  console.log("chainId", chainId);
+  console.log("activeChain", activeChain);
+
   const [selectedSyllabus, setSelectedSyllabus] = useState(null);
 
   console.log("selectedSyllabus", selectedSyllabus);
@@ -296,15 +305,17 @@ console.log('courseLStatus', courseLStatus);
 console.log('enrolledEvents', enrolledEvents);
 console.log('enrolledStudents', enrolledStudents);
 console.log('isEnrolled', isEnrolled);
-  console.log('courseInfo received by course card:', courseInfo);
-  console.log('syllabus to send to Courses.js:', syllabus);
-  console.log('sponsorAmountInWei CC.js', sponsorAmountInWei);
+console.log('courseInfo received by course card:', courseInfo);
+console.log('syllabus to send to Courses.js:', syllabus);
+console.log('sponsorAmountInWei CC.js', sponsorAmountInWei);
 
   const [isLiked, setIsLiked] = useState(liked);
 
 
 
   const displayAddress = teacherAddress ? `${teacherAddress.substring(0, 4)}...${teacherAddress.slice(-4)}` : '';
+
+  const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const tooltipContent = React.createElement(
     Box,
@@ -349,6 +360,7 @@ console.log('isEnrolled', isEnrolled);
       {
         variant: 'solid',
         color: 'success',
+        disabled: isDisabled,
         onClick: () => {
           (async () => {
             try {
@@ -368,6 +380,7 @@ console.log('isEnrolled', isEnrolled);
       {
         variant: 'solid',
         color: 'danger',
+        disabled: isDisabled,
         onClick: () => {
           // Call the unsponsor function
           unsponsorCall(item.data.courseId, sponsorAmountInWei);
@@ -391,7 +404,7 @@ console.log('isEnrolled', isEnrolled);
         variant="outlined"
         color="danger"
         onClick= {initializeCourseCall}
-        disabled={isInitializingCourse}
+        disabled={isDisabled}
       >
         Initialize Me!
       </Button>
@@ -557,8 +570,8 @@ function StudentEvaluationModal({
               {studentsInProgress && studentsInProgress.map(studentAddress => (
                 <div key={studentAddress}>
                   {studentAddress}
-                  <Button onClick={() => handlePass(studentAddress)}>Pass</Button>
-                  <Button onClick={() => handleFail(studentAddress)}>Fail</Button>
+                  <Button disabled={isDisabled} onClick={() => handlePass(studentAddress)}>Pass</Button>
+                  <Button disabled={isDisabled} onClick={() => handleFail(studentAddress)}>Fail</Button>
                 </div>
               ))}
 
@@ -578,7 +591,7 @@ function StudentEvaluationModal({
             </Stack>
           </DialogContent>
           {!studentsInProgress.length && !isPaymentClaimed ? 
-              <Button onClick={claimCall}>
+              <Button onClick={claimCall} disabled={isDisabled}>
                   Claim Payment
               </Button>
           :
@@ -717,6 +730,7 @@ function StudentEvaluationModal({
     <Button
       variant="outlined"
       color="neutral"
+      disabled= {isDisabled}
       onClick={(event) => {
         event.stopPropagation();
         setFormSubmitted(false);
@@ -801,7 +815,7 @@ function StudentEvaluationModal({
                 </SvgIcon>
               }
           >
-              Upload New Syllabus
+              Upload New Syllabus (.pdf only)
               <VisuallyHiddenInput
                   type="file"
                   accept=".pdf"
@@ -992,7 +1006,7 @@ function StudentEvaluationModal({
     
   </React.Fragment> :
     courseLStatus === "Open" ?
-      <Button fullWidth= 'true' variant="outlined" color="neutral" onClick={startCourseCall}>Start Course</Button> :
+      <Button fullWidth= 'true' variant="outlined" color="neutral" disabled= {isDisabled} onClick={startCourseCall}>Start Course</Button> :
     // For "In-Progress" we will add the modal for Pass/Fail/Claim Payment in the next step
     (courseLStatus === "In-Progress" || courseLStatus === "Complete") && (
       <React.Fragment>
@@ -1237,7 +1251,10 @@ function StudentEvaluationModal({
               placement: "top-end",
               variant: "outlined",
               arrow: true,
-              title: tooltipContent
+              title: tooltipContent,
+              open: tooltipOpen, // Controlled by state
+              onMouseEnter: () => setTooltipOpen(true), // Open on mouse enter
+              onMouseLeave: () => setTooltipOpen(false), // Close on mouse leave
           },
           React.createElement(
               LinearProgress,
@@ -1285,6 +1302,7 @@ function StudentEvaluationModal({
             variant: 'solid',
             color: buttonColor,
             onClick: buttonAction,
+            disabled: isDisabled,
             sx: { zIndex: 1000 }
           },
           buttonLabel

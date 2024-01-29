@@ -187,21 +187,26 @@ contract CourseContract is AccessControl, Initializable {
                 break;
             }
         }
-
-        // Only grant role and add to sponsors list if not already a sponsor
-        if (!isAlreadySponsor) {
-            _grantRole(SPONSOR, msg.sender);
-            sponsors.push(msg.sender);
-        }
-
+        
+        // Update sponsorship total and individual sponsor deposit
         uint currentDeposit = sponsorDeposit[msg.sender] + msg.value;
         uint _sponsorshipTotal = sponsorshipTotal + msg.value;
         assert(_sponsorshipTotal >= sponsorshipTotal);
         sponsorshipTotal = _sponsorshipTotal;
         sponsorDeposit[msg.sender] = currentDeposit;
 
+        // Grant SPONSOR role if not already a sponsor and if currentDeposit is greater than zero
+        if (!hasRole(SPONSOR, msg.sender) && currentDeposit > 0) {
+            _grantRole(SPONSOR, msg.sender);
+        }
+
+        // Only grant role and add to sponsors list if not already a sponsor
+        if (!isAlreadySponsor) {
+            sponsors.push(msg.sender);
+        }
+
         // Pass the course contract address to the factory contract
-        factory.updateSponsorship(msg.sender, address(this), msg.value);
+        factory.updateSponsorship(msg.sender, address(this), teacher, msg.value);
 
         emit Sponsored(currentDeposit, msg.sender);
     }
@@ -223,7 +228,7 @@ contract CourseContract is AccessControl, Initializable {
         assert(_sponsorshipTotal <= sponsorshipTotal);
         sponsorshipTotal = _sponsorshipTotal;
         sponsorDeposit[_to]=currentDeposit;
-        factory.updateUnsponsor(msg.sender, _amount);
+        factory.updateUnsponsor(msg.sender, teacher, _amount);
         if (sponsorDeposit[_to] == 0){
         _revokeRole(SPONSOR, _to);
         emit RevokeRole(SPONSOR, _to);
