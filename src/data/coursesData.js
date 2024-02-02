@@ -82,7 +82,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -95,7 +95,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -108,7 +108,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -148,7 +148,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -162,7 +162,7 @@ export default function CoursesData( item, academyAddress ) {
         {
           queryFilter: {
             filters: {},
-            fromBlock: 50488912, // Events starting from this block
+            fromBlock: 53033091, // Events starting from this block
             toBlock: "latest", // Events up to this block
             order: "asc", // Order of events ("asc" or "desc")
           },

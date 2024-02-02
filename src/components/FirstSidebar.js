@@ -59,6 +59,10 @@ export default function FirstSidebar() {
   const [index, setIndex] = React.useState(0);
   const [layout, setLayout] = React.useState(undefined);
 
+  const handleClick = () => {
+    window.open('https://chat.openai.com/g/g-YZxdmcTkm-syllabus-builder', '_blank');
+  };
+
   
   React.useEffect(() => {
     switch (location.pathname) {
@@ -184,6 +188,15 @@ export default function FirstSidebar() {
             <i data-feather="settings" />
           </ListItemButton>
         </ListItem> */}
+        <IconButton
+          aria-controls={'composition-menu'}
+          aria-haspopup="true"
+          variant="soft"
+          color="inherit"
+          onClick={handleClick}
+         >
+          <StyledAvatar alt="AI Ant" src="https://github.com/Peace-Antz/academyv2/blob/d438d9694bbcb0cdfe0a3a6d9423f456229b3cb4/src/assets/images/aiant.png?raw=true" />
+      </IconButton>
       </List>
       <IconButton
         aria-controls={'composition-menu'}
