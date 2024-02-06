@@ -33,8 +33,9 @@ import TextField from '@mui/material/TextField';
 import Badge from '@mui/joy/Badge';
 import {  useChainId } from "@thirdweb-dev/react";
 import { Polygon } from "@thirdweb-dev/chains";
-
-
+import Radio from '@mui/joy/Radio';
+import RadioGroup from '@mui/joy/RadioGroup';
+import { Link as RouterLink } from 'react-router-dom';
 
 
 export default function CourseCard({
@@ -162,6 +163,10 @@ export default function CourseCard({
     setStartDate,
     modalCalendarLink,
     setModalCalendarLink,
+    modalCourseLink, 
+    setModalCourseLink,
+    modalCourseType,
+    setModalCourseType,
     modalPayment,
     modalSetPayment,
     setFormSubmitted,
@@ -208,7 +213,9 @@ const {
   timeCommitment = defaultInfo,
   startDate = defaultInfo,
   image = defaultInfo,
+  courseType = defaultInfo,
   calendarLink = defaultInfo,
+  courseLink = defaultInfo,
   syllabus = defaultInfo,
 } = courseInfo || {};
 
@@ -447,6 +454,8 @@ function CourseDetailsModalData() {
   const [modalTimeCommitment, setTimeCommitment] = React.useState('');
   const [modalStartDate, setStartDate] = React.useState('');
   const [modalCalendarLink, setModalCalendarLink] = React.useState('');
+  const [modalCourseLink, setModalCourseLink] = React.useState('');
+  const [modalCourseType, setModalCourseType] = React.useState('');
   const [modalPayment, modalSetPayment] = React.useState('0');
   const [imageUploading, setImageUploading] = useState(false);
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -500,6 +509,10 @@ const handleImageUpload = async (file) => {
     setStartDate,
     modalCalendarLink,
     setModalCalendarLink,
+    modalCourseLink, 
+    setModalCourseLink,
+    modalCourseType,
+    setModalCourseType,
     modalPayment,
     modalSetPayment,
     formSubmitted,
@@ -763,39 +776,51 @@ const formatBalance = (balance) => {
       <ModalOverflow>
       <ModalDialog>
         <DialogTitle>Input Course Details</DialogTitle>
-        <DialogContent>Fill in the information of the course.</DialogContent>
+        <DialogContent>Fill in the information of the course. Need help? Go to our <Link component={RouterLink} target="_blank" to="/resources">Resources.</Link></DialogContent>
         <form
           onSubmit={() => {
             //event.preventDefault();
             //event.stopPropagation();
-            setPaymentCall(modalTitle, modalDescription, modalTimeCommitment, modalStartDate, modalCalendarLink, pdfData, courseImage, paymentAmountInWei);
+            setPaymentCall(modalTitle, modalDescription, modalTimeCommitment, modalStartDate, modalCourseType, modalCalendarLink, modalCourseLink, pdfData, courseImage, paymentAmountInWei);
             setFormSubmitted(true);
             setOpen(false);
           }}
         >
           <Stack  spacing={1}>
             <FormControl>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Title*</FormLabel>
               <Input maxLength="5" value={modalTitle} onChange={(e) => modalSetTitle(e.target.value)} placeholder="Name your course" autoFocus required />
             </FormControl>
             <FormControl>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Description*</FormLabel>
               <Input slotProps={{ input: { multiline: true, rows:"2", maxLength:"250" } }} value={modalDescription} onChange={(e) => setDescription(e.target.value)} placeholder="Write a brief description" required />
             </FormControl>
             <FormControl>
-              <FormLabel>Time Commitment in hours</FormLabel>
+              <FormLabel>Time Commitment in hours*</FormLabel>
               <Input type="number" value={modalTimeCommitment} onChange={(e) => setTimeCommitment(e.target.value)}placeholder="Recommend 1-2hr" required />
             </FormControl>
             <FormControl>
-              <FormLabel>Course Starts</FormLabel>
+              <FormLabel>Course Starts*</FormLabel>
               <Input type="datetime-local" value={modalStartDate} onChange={(e) => setStartDate(e.target.value)} required />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Course Type*</FormLabel>
+              <RadioGroup defaultValue="outlined" name="radio-buttons-group" orientation="horizontal" onChange={(e) => setModalCourseType(e.target.value)} required >
+                <Radio value="Virtual" label="Virtual" color="primary" size="sm"/>
+                <Radio value="In-Person" label="In-Person" color="primary" size="sm"/>
+                <Radio value="Hybrid" label="Hybrid" color="primary" size="sm"/>
+              </RadioGroup>
             </FormControl>
             <FormControl>
             <FormLabel>Calender Link</FormLabel>
               <Input type="url" value={modalCalendarLink} onChange={(e) => setModalCalendarLink(e.target.value)} placeholder="Link to a course calendar"/>
             </FormControl>
             <FormControl>
-            <FormLabel>Set Your Payment</FormLabel>
+            <FormLabel>Course Link*</FormLabel>
+              <Input type="url" value={modalCourseLink} onChange={(e) => setModalCourseLink(e.target.value)} placeholder="Link to join the course (Map link for In-person)" required/>
+            </FormControl>
+            <FormControl>
+            <FormLabel>Set Your Payment*</FormLabel>
               <Input type="number" value={modalPayment} onChange={(e) => modalSetPayment(e.target.value)} placeholder="Enter amount in MATIC" required />
             </FormControl>
             <FormControl>
@@ -828,7 +853,7 @@ const formatBalance = (balance) => {
                 </SvgIcon>
               }
           >
-              Upload New Syllabus (.pdf only)
+              Upload New Syllabus (.pdf only)*
               <VisuallyHiddenInput
                   type="file"
                   accept=".pdf"
@@ -872,7 +897,7 @@ const formatBalance = (balance) => {
             </SvgIcon>
             }
         >
-            Upload Syllabus
+            Upload Syllabus*
             <VisuallyHiddenInput
                 required
                 type="file"
@@ -970,7 +995,7 @@ const formatBalance = (balance) => {
         </SvgIcon>
         }
       >
-        Upload Course Image
+        Upload Course Image*
         <VisuallyHiddenInput
           required
           type="file"
@@ -1199,6 +1224,23 @@ const formatBalance = (balance) => {
               minute: "2-digit",
               timeZoneName: "short"
           })
+          ),
+          ),
+          React.createElement(
+            Link,
+            {
+              href: courseLink, // The URL you want to link to
+              target: '_blank',       // Optional: Opens the link in a new tab
+              rel: 'noopener noreferrer', // Best practice when using target="_blank" for security reasons
+              color: 'neutral'
+            },
+          React.createElement(
+            Typography,
+            {
+              startDecorator: React.createElement('i', { 'data-feather': 'map' }),
+              fontSize: 'xs',
+            },
+            courseType
           ),
           ),
           React.createElement(

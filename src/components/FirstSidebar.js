@@ -157,7 +157,7 @@ export default function FirstSidebar() {
         </Tooltip>
         </ListItem>
         <ListItem>
-        <Tooltip title="Rankings" variant="plain" placement="right">
+        <Tooltip title="Rankings (Coming Soon!)" variant="plain" placement="right">
           <ListItemButton selected={index === 2} onClick={() => setIndex(2)} component={Link} to="/rank" >
             <i data-feather="bar-chart-2" />
           </ListItemButton>
@@ -172,14 +172,14 @@ export default function FirstSidebar() {
         </ListItem>
 
         <ListItem>
-        <Tooltip title="Report" variant="plain" placement="right">
+        <Tooltip title="Report (Coming Soon!)" variant="plain" placement="right">
           <ListItemButton selected={index === 4} onClick={() => setIndex(4)} component={Link} to="/report">
             <i data-feather="flag" />
           </ListItemButton>
         </Tooltip>
         </ListItem>
         <ListItem>
-        <Tooltip title="Review" variant="plain" placement="right">
+        <Tooltip title="Review (Coming Soon!)" variant="plain" placement="right">
           <ListItemButton selected={index === 5} onClick={() => setIndex(5)} component={Link} to="/review">
             <i data-feather="users" />
           </ListItemButton>

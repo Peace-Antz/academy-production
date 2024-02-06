@@ -452,10 +452,10 @@ export default function CoursesData( item, academyAddress ) {
       }
     };
   
-    const uploadFile = async (courseTitle, description, timeCommitment, startDateTime, calendarLink, pdfData, imageData) => {
+    const uploadFile = async (courseTitle, description, timeCommitment, startDateTime, courseType, calendarLink, courseLink, pdfData, imageData) => {
       try {
         // Validate that all required information is present
-        if (!courseTitle || !description || !timeCommitment || !startDateTime || !pdfData || !imageData) {
+        if (!courseTitle || !description || !timeCommitment || !startDateTime || !courseType || !courseLink || !pdfData || !imageData) {
           throw new Error("Missing required course information");
         }
     
@@ -465,7 +465,9 @@ export default function CoursesData( item, academyAddress ) {
             description: description,
             timeCommitment: timeCommitment,
             startDate: startDateTime,
+            courseType: courseType,
             calendarLink: calendarLink,
+            courseLink: courseLink,
             syllabus: pdfData,
             image: imageData
           }
@@ -495,12 +497,12 @@ export default function CoursesData( item, academyAddress ) {
   
     console.log("initData:", initData);
   
-    const setPaymentCall = async (courseTitle, description, timeCommitment, startDateTime, calendarLink, pdfData, imageData, paymentAmountInWei) => {
+    const setPaymentCall = async (courseTitle, description, timeCommitment, startDateTime, courseType, calendarLink, courseLink, pdfData, imageData, paymentAmountInWei) => {
       try {
         // Upload the file and get the course info
         let courseInfo;
         try {
-          courseInfo = await uploadFile(courseTitle, description, timeCommitment, startDateTime, calendarLink, pdfData, imageData);
+          courseInfo = await uploadFile(courseTitle, description, timeCommitment, startDateTime, courseType, calendarLink, courseLink, pdfData, imageData);
         } catch (err) {
           console.error("Failed to upload file:", err);
           let errorReason;
