@@ -19,7 +19,7 @@ import Container from '@mui/joy/Container';
 
 
 function Courses() {
-  const academyAddress = "0x6BbE7Ab688761Bb5d53B6717c9009B85796A99C6"
+  const academyAddress = "0x62549B8BC35828aE36ed23a998580D01170cF318"
   // eslint-disable-next-line
   const { contract, isLoadingContract, errorContract } = useContract(academyAddress); //Make sure to change initilize call (academyAddress) as well if you change this.
   const [selectedCourse, setSelectedCourse] = useState(null);
