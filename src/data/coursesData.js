@@ -358,34 +358,46 @@ export default function CoursesData( item, academyAddress ) {
   }, [isLoadingStudentDeposit, paymentStatusEvents, uri]);
   
   useEffect(() => {
-    const newStatus = { ...studentStatus };
-  
-        if (enrolledEvents) {
-          enrolledEvents.forEach(e => {
-            if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
-              newStatus[e.data.account] = { status: "inProgress", blockNumber: e.transaction.blockNumber };
-            }
-          });
-        }
-      
-        if (courseCompletedEvents) {
-          courseCompletedEvents.forEach(e => {
-            if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
-              newStatus[e.data.account] = { status: "passed", blockNumber: e.transaction.blockNumber };
-            }
-          });
-        }
-      
-        if (dropoutEvents) {
-          dropoutEvents.forEach(e => {
-            if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
-              newStatus[e.data.account] = { status: "failed", blockNumber: e.transaction.blockNumber };
-            }
-          });
-        }
-      
-        setStudentStatus(newStatus);
-      }, [enrolledEvents, courseCompletedEvents, dropoutEvents]);
+  const newStatus = { ...studentStatus };
+
+  if (enrolledEvents) {
+    enrolledEvents.forEach(e => {
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "inProgress", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  if (courseCompletedEvents) {
+    courseCompletedEvents.forEach(e => {
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "passed", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  if (dropoutEvents) {
+    dropoutEvents.forEach(e => {
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "failed", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  // Handle role revoked events
+  if (roleRevokedEvents) {
+    roleRevokedEvents.forEach(e => {
+      // Assuming e.data.account is the student's account and you're checking for a specific role,
+      // adjust the logic here if the event structure is different
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "withdrawn", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  setStudentStatus(newStatus);
+}, [enrolledEvents, courseCompletedEvents, dropoutEvents, roleRevokedEvents]);
+
 
       useEffect(() => {
         const inProgress = [];
@@ -403,10 +415,15 @@ export default function CoursesData( item, academyAddress ) {
             case "failed":
               failed.push(student);
               break;
+            // Withdrawn students are not added to any list
+            case "withdrawn":
+              // Optionally handle withdrawn students
+              break;
             default:
               break;
           }
         });
+        
       
         setStudentsInProgress(inProgress);
         setStudentsPassed(passed);
