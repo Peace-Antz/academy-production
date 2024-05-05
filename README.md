@@ -1,70 +1,73 @@
-# Getting Started with Create React App
+# Peace Antz Academy
+## A Decentralized School Contract for Online Learning and Talent Scouting
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Peace Antz Academy Dapp! Our decentralized school contract and course contract are smart contracts that revolutionizes online learning and talent scouting by connecting teachers, sponsors, and students on the blockchain.
 
-## Available Scripts
+## 🌟 Features
+- **Course Creation**: Teachers can create and market courses. They are also responsible for preparing the syllabus for each class they create, which define the length and milestones of the course as well as have all the relavent links needed for the course.
+- **Staking and Sponsorship**: Students need to stake funds to enroll in courses. Teachers get paid by sponsors for teaching. Sponsors can also scout talent by working with the teacher.
+- **Ranking and Statistics**: The factory contract records rankings and statistics for teachers, students, and sponsors.
+- **Decentralized and Transparent**: The smart contract is executed on the blockchain, ensuring a decentralized and transparent mechanism.
 
-In the project directory, you can run:
+## 🚀 How It Works
+1. **Course Setup**: Teachers create courses and write the syllabus, defining the length and milestones. This information is stored as an IPFS link which is stored on the course smart contract.
+2. **Student Enrollment**: Students show interest by staking funds. Sponsors can then come in to sponsor these courses.
+3. **Course Commencement**: Once a course is sponsored, it begins on the start date. Teachers sign the course contract as a PASS for each student who passes, releasing staked funds and a certificate of completion NFT. If the student fails the course, the teacher signs them as FAILED and those funds go to the Academy Council Gnosis safe.
+4. **Course Completion**: After the course ends and all students are processed, teachers get paid, and students who complete the course successfully get their staked funds back.
 
-### `npm start`
+## 🔧 Implementation
+The Peace Antz Academy consists of two main contracts:
+1. **Course Factory Contract (Peace Antz Academy Contract)**
+2. **Course Contract**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Course Factory Contract
+- Written in Solidity, deployable on any EVM-compatible blockchain.
+- Allows teachers to deploy new course contracts.
+- Maintains rankings and statistics for teachers, students, and sponsors.
+- Records academy-wide statistics including total value locked (TVL), total sponsored, total staked, total payouts, and a "fail fund".
+- Ensures that functions are only called by recognized course contracts through the `isValid()` modifier.
+- Updates rankings and academy information based on course-related events.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Course Contract
+- Facilitates the setup and operation of an online course system.
+- Teachers have control over the course status and payment.
+- Students can enroll by staking currency, and receive their stake back if they pass.
+- Sponsors can deposit funds, which can be withdrawn by the teacher upon course completion.
 
-### `npm test`
+## 📖 Usage
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### As a Teacher
+1. Deploy the contract with your address and the Course Factory address.
+2. Set the payment amount for the course using `setAmount()`.
+3. Start the course using `updateCourseStatus()`.
+4. Pass students who complete the course using `passStudent()`.
+5. Claim the sponsored payment using `claimPayment()`.
 
-### `npm run build`
+### As a Student
+1. Enroll in a course using `enroll()` with the required stake.
+2. To leave before the course starts, use `withdraw()`.
+3. To drop out after the course starts, use `dropOut()`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### As a Sponsor
+1. Sponsor a course using `sponsor()`.
+2. To withdraw your sponsorship before the course begins, use `unsponsor()`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🔐 Dependencies
+- The contract utilizes OpenZeppelin's Access Control contract for access control functionalities.
+- It also uses the Initializable contract for initializing the contract in an upgradeable context.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ⚠️ Disclaimer
+Please be advised that this contract has not been audited. Use at your own risk.
 
-### `npm run eject`
+## ✨ Benefits
+- **For Teachers**: Earn money by teaching courses and have the freedom to define course length and milestones.
+- **For Students**: Learn important skills for free upon successful completion of the course.
+- **For Sponsors**: Scout talent and invest in skills they want to hire.
+- **Authenticity and Transparency**: The use of smart contracts and blockchain technology ensure the authenticity of the course and completion certificates, and blockchain implementation ensures transparency.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🎓 Conclusion
+The Peace Antz Academy Dapp is an innovative solution that can revolutionize the way we think about online learning and talent scouting. It provides a transparent, decentralized, and efficient mechanism for connecting teachers, sponsors, and students on the blockchain. With a focus on course creation, stakeholding, completion certificates, and rankings, it benefits all parties involved and can be easily implemented on any blockchain platform that supports smart contracts.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Join us in this revolutionary approach to online learning and talent scouting.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![Peace Antz Academy Overview](https://github.com/Peace-Antz/PeaceAntzAcademy/assets/overview.png)
