@@ -31,9 +31,11 @@ import { styled } from '@mui/joy';
 import { MediaRenderer } from "@thirdweb-dev/react";
 import TextField from '@mui/material/TextField';
 import Badge from '@mui/joy/Badge';
-
-
-
+import {  useChainId } from "@thirdweb-dev/react";
+import { Polygon } from "@thirdweb-dev/chains";
+import Radio from '@mui/joy/Radio';
+import RadioGroup from '@mui/joy/RadioGroup';
+import { Link as RouterLink } from 'react-router-dom';
 
 
 export default function CourseCard({
@@ -50,6 +52,14 @@ export default function CourseCard({
    liked = false,
    thumbnail = null,
 }) {
+  
+  const chainId = useChainId();
+  const activeChain = Polygon;
+  const isDisabled = chainId !== activeChain.chainId;
+  
+  console.log("chainId", chainId);
+  console.log("activeChain", activeChain);
+
   const [selectedSyllabus, setSelectedSyllabus] = useState(null);
 
   console.log("selectedSyllabus", selectedSyllabus);
@@ -153,6 +163,10 @@ export default function CourseCard({
     setStartDate,
     modalCalendarLink,
     setModalCalendarLink,
+    modalCourseLink, 
+    setModalCourseLink,
+    modalCourseType,
+    setModalCourseType,
     modalPayment,
     modalSetPayment,
     setFormSubmitted,
@@ -199,7 +213,9 @@ const {
   timeCommitment = defaultInfo,
   startDate = defaultInfo,
   image = defaultInfo,
+  courseType = defaultInfo,
   calendarLink = defaultInfo,
+  courseLink = defaultInfo,
   syllabus = defaultInfo,
 } = courseInfo || {};
 
@@ -296,15 +312,17 @@ console.log('courseLStatus', courseLStatus);
 console.log('enrolledEvents', enrolledEvents);
 console.log('enrolledStudents', enrolledStudents);
 console.log('isEnrolled', isEnrolled);
-  console.log('courseInfo received by course card:', courseInfo);
-  console.log('syllabus to send to Courses.js:', syllabus);
-  console.log('sponsorAmountInWei CC.js', sponsorAmountInWei);
+console.log('courseInfo received by course card:', courseInfo);
+console.log('syllabus to send to Courses.js:', syllabus);
+console.log('sponsorAmountInWei CC.js', sponsorAmountInWei);
 
   const [isLiked, setIsLiked] = useState(liked);
 
 
 
   const displayAddress = teacherAddress ? `${teacherAddress.substring(0, 4)}...${teacherAddress.slice(-4)}` : '';
+
+  const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const tooltipContent = React.createElement(
     Box,
@@ -349,6 +367,7 @@ console.log('isEnrolled', isEnrolled);
       {
         variant: 'solid',
         color: 'success',
+        disabled: isDisabled,
         onClick: () => {
           (async () => {
             try {
@@ -368,6 +387,7 @@ console.log('isEnrolled', isEnrolled);
       {
         variant: 'solid',
         color: 'danger',
+        disabled: isDisabled,
         onClick: () => {
           // Call the unsponsor function
           unsponsorCall(item.data.courseId, sponsorAmountInWei);
@@ -391,7 +411,7 @@ console.log('isEnrolled', isEnrolled);
         variant="outlined"
         color="danger"
         onClick= {initializeCourseCall}
-        disabled={isInitializingCourse}
+        disabled={isDisabled}
       >
         Initialize Me!
       </Button>
@@ -434,6 +454,8 @@ function CourseDetailsModalData() {
   const [modalTimeCommitment, setTimeCommitment] = React.useState('');
   const [modalStartDate, setStartDate] = React.useState('');
   const [modalCalendarLink, setModalCalendarLink] = React.useState('');
+  const [modalCourseLink, setModalCourseLink] = React.useState('');
+  const [modalCourseType, setModalCourseType] = React.useState('');
   const [modalPayment, modalSetPayment] = React.useState('0');
   const [imageUploading, setImageUploading] = useState(false);
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -487,6 +509,10 @@ const handleImageUpload = async (file) => {
     setStartDate,
     modalCalendarLink,
     setModalCalendarLink,
+    modalCourseLink, 
+    setModalCourseLink,
+    modalCourseType,
+    setModalCourseType,
     modalPayment,
     modalSetPayment,
     formSubmitted,
@@ -557,8 +583,8 @@ function StudentEvaluationModal({
               {studentsInProgress && studentsInProgress.map(studentAddress => (
                 <div key={studentAddress}>
                   {studentAddress}
-                  <Button onClick={() => handlePass(studentAddress)}>Pass</Button>
-                  <Button onClick={() => handleFail(studentAddress)}>Fail</Button>
+                  <Button disabled={isDisabled} onClick={() => handlePass(studentAddress)}>Pass</Button>
+                  <Button disabled={isDisabled} onClick={() => handleFail(studentAddress)}>Fail</Button>
                 </div>
               ))}
 
@@ -578,7 +604,7 @@ function StudentEvaluationModal({
             </Stack>
           </DialogContent>
           {!studentsInProgress.length && !isPaymentClaimed ? 
-              <Button onClick={claimCall}>
+              <Button onClick={claimCall} disabled={isDisabled}>
                   Claim Payment
               </Button>
           :
@@ -591,6 +617,19 @@ function StudentEvaluationModal({
     </Modal>
   );
 }
+
+const formatBalance = (balance) => {
+  const num = parseFloat(balance);
+  if (isNaN(num)) return '0'; // or any default value you prefer
+
+  // Check if the number is an integer
+  if (Number.isInteger(num)) {
+    return num.toString();
+  } 
+
+  // If not an integer, round to two decimal places
+  return num.toFixed(2);
+};
 
   
   if (teacherAddress === '0x0000000000000000000000000000000000000000') {
@@ -717,6 +756,7 @@ function StudentEvaluationModal({
     <Button
       variant="outlined"
       color="neutral"
+      disabled= {isDisabled}
       onClick={(event) => {
         event.stopPropagation();
         setFormSubmitted(false);
@@ -736,39 +776,51 @@ function StudentEvaluationModal({
       <ModalOverflow>
       <ModalDialog>
         <DialogTitle>Input Course Details</DialogTitle>
-        <DialogContent>Fill in the information of the course.</DialogContent>
+        <DialogContent>Fill in the information of the course. Need help? Go to our <Link component={RouterLink} target="_blank" to="/resources">Resources.</Link></DialogContent>
         <form
           onSubmit={() => {
             //event.preventDefault();
             //event.stopPropagation();
-            setPaymentCall(modalTitle, modalDescription, modalTimeCommitment, modalStartDate, modalCalendarLink, pdfData, courseImage, paymentAmountInWei);
+            setPaymentCall(modalTitle, modalDescription, modalTimeCommitment, modalStartDate, modalCourseType, modalCalendarLink, modalCourseLink, pdfData, courseImage, paymentAmountInWei);
             setFormSubmitted(true);
             setOpen(false);
           }}
         >
           <Stack  spacing={1}>
             <FormControl>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Title*</FormLabel>
               <Input maxLength="5" value={modalTitle} onChange={(e) => modalSetTitle(e.target.value)} placeholder="Name your course" autoFocus required />
             </FormControl>
             <FormControl>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Description*</FormLabel>
               <Input slotProps={{ input: { multiline: true, rows:"2", maxLength:"250" } }} value={modalDescription} onChange={(e) => setDescription(e.target.value)} placeholder="Write a brief description" required />
             </FormControl>
             <FormControl>
-              <FormLabel>Time Commitment in hours</FormLabel>
+              <FormLabel>Time Commitment in hours*</FormLabel>
               <Input type="number" value={modalTimeCommitment} onChange={(e) => setTimeCommitment(e.target.value)}placeholder="Recommend 1-2hr" required />
             </FormControl>
             <FormControl>
-              <FormLabel>Course Starts</FormLabel>
+              <FormLabel>Course Starts*</FormLabel>
               <Input type="datetime-local" value={modalStartDate} onChange={(e) => setStartDate(e.target.value)} required />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Course Type*</FormLabel>
+              <RadioGroup defaultValue="outlined" name="radio-buttons-group" orientation="horizontal" onChange={(e) => setModalCourseType(e.target.value)} required >
+                <Radio value="Virtual" label="Virtual" color="primary" size="sm"/>
+                <Radio value="In-Person" label="In-Person" color="primary" size="sm"/>
+                <Radio value="Hybrid" label="Hybrid" color="primary" size="sm"/>
+              </RadioGroup>
             </FormControl>
             <FormControl>
             <FormLabel>Calender Link</FormLabel>
               <Input type="url" value={modalCalendarLink} onChange={(e) => setModalCalendarLink(e.target.value)} placeholder="Link to a course calendar"/>
             </FormControl>
             <FormControl>
-            <FormLabel>Set Your Payment</FormLabel>
+            <FormLabel>Course Link*</FormLabel>
+              <Input type="url" value={modalCourseLink} onChange={(e) => setModalCourseLink(e.target.value)} placeholder="Link to join the course (Map link for In-person)" required/>
+            </FormControl>
+            <FormControl>
+            <FormLabel>Set Your Payment*</FormLabel>
               <Input type="number" value={modalPayment} onChange={(e) => modalSetPayment(e.target.value)} placeholder="Enter amount in MATIC" required />
             </FormControl>
             <FormControl>
@@ -801,7 +853,7 @@ function StudentEvaluationModal({
                 </SvgIcon>
               }
           >
-              Upload New Syllabus
+              Upload New Syllabus (.pdf only)*
               <VisuallyHiddenInput
                   type="file"
                   accept=".pdf"
@@ -845,7 +897,7 @@ function StudentEvaluationModal({
             </SvgIcon>
             }
         >
-            Upload Syllabus
+            Upload Syllabus*
             <VisuallyHiddenInput
                 required
                 type="file"
@@ -943,7 +995,7 @@ function StudentEvaluationModal({
         </SvgIcon>
         }
       >
-        Upload Course Image
+        Upload Course Image*
         <VisuallyHiddenInput
           required
           type="file"
@@ -992,7 +1044,7 @@ function StudentEvaluationModal({
     
   </React.Fragment> :
     courseLStatus === "Open" ?
-      <Button fullWidth= 'true' variant="outlined" color="neutral" onClick={startCourseCall}>Start Course</Button> :
+      <Button fullWidth= 'true' variant="outlined" color="neutral" disabled= {isDisabled} onClick={startCourseCall}>Start Course</Button> :
     // For "In-Progress" we will add the modal for Pass/Fail/Claim Payment in the next step
     (courseLStatus === "In-Progress" || courseLStatus === "Complete") && (
       <React.Fragment>
@@ -1080,7 +1132,7 @@ function StudentEvaluationModal({
               padding: '0.25rem 0.5rem', // Adjust the padding as needed
             },
           },
-          `Contract Balance: ${balance}`
+          `Contract Balance: ${formatBalance(balance)} MATIC`
         ),
         ),
         React.createElement(
@@ -1175,6 +1227,23 @@ function StudentEvaluationModal({
           ),
           ),
           React.createElement(
+            Link,
+            {
+              href: courseLink, // The URL you want to link to
+              target: '_blank',       // Optional: Opens the link in a new tab
+              rel: 'noopener noreferrer', // Best practice when using target="_blank" for security reasons
+              color: 'neutral'
+            },
+          React.createElement(
+            Typography,
+            {
+              startDecorator: React.createElement('i', { 'data-feather': 'map' }),
+              fontSize: 'xs',
+            },
+            courseType
+          ),
+          ),
+          React.createElement(
             Typography,
             {
               startDecorator: React.createElement('i', { 'data-feather': 'clock' }),
@@ -1237,7 +1306,10 @@ function StudentEvaluationModal({
               placement: "top-end",
               variant: "outlined",
               arrow: true,
-              title: tooltipContent
+              title: tooltipContent,
+              open: tooltipOpen, // Controlled by state
+              onMouseEnter: () => setTooltipOpen(true), // Open on mouse enter
+              onMouseLeave: () => setTooltipOpen(false), // Close on mouse leave
           },
           React.createElement(
               LinearProgress,
@@ -1285,6 +1357,7 @@ function StudentEvaluationModal({
             variant: 'solid',
             color: buttonColor,
             onClick: buttonAction,
+            disabled: isDisabled,
             sx: { zIndex: 1000 }
           },
           buttonLabel

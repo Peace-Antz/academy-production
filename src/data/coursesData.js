@@ -2,9 +2,11 @@ import { useContract, useContractRead, useContractWrite, useContractEvents, useS
 import { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import { ethers } from "ethers";
+import { useErrorModal } from "../utils/ErrorModalContext";
 
 //Course Contract functions
 export default function CoursesData( item, academyAddress ) {
+    const { showErrorModal } = useErrorModal();
 
     //This uses the contract of each separate course
     console.log("First Item ", item);
@@ -80,7 +82,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -93,7 +95,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -106,7 +108,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -146,7 +148,7 @@ export default function CoursesData( item, academyAddress ) {
       {
         queryFilter: {
           filters: {},
-          fromBlock: 50488912, // Events starting from this block
+          fromBlock: 53033091, // Events starting from this block
           toBlock: "latest", // Events up to this block
           order: "asc", // Order of events ("asc" or "desc")
         },
@@ -160,7 +162,7 @@ export default function CoursesData( item, academyAddress ) {
         {
           queryFilter: {
             filters: {},
-            fromBlock: 50488912, // Events starting from this block
+            fromBlock: 53033091, // Events starting from this block
             toBlock: "latest", // Events up to this block
             order: "asc", // Order of events ("asc" or "desc")
           },
@@ -290,23 +292,29 @@ export default function CoursesData( item, academyAddress ) {
     }, [studentAddress]);
   
     useEffect(() => {
-        const fetchBalance = async () => {
-            try {
-                const web3 = new Web3(Web3.givenProvider || "https://peace-antz-academy.infura-ipfs.io");
-                if (web3.utils.isAddress(item?.data?.courseId)) {
-                    const contractBalance = await web3.eth.getBalance(item?.data?.courseId);
-                    console.log("Raw Balance in Wei:", contractBalance); 
-                    setBalance(web3.utils.fromWei(contractBalance, 'ether'));
-                } else {
-                    console.error(`Invalid address: ${item?.data?.courseId}`);
-                }
-            } catch (error) {
-                console.error(`Error fetching balance for address ${item?.data?.courseId}:`, error);
-            }
-        };
-      
-        fetchBalance(item?.data?.courseId);
-    }, [item?.data?.courseId, courseCompletedEvents, enrolledEvents, roleRevokedEvents, dropoutEvents]);
+      const fetchBalance = async () => {
+          try {
+              const web3 = new Web3(Web3.givenProvider || "https://polygon-mainnet.infura.io/v3/2QmAL33s4txhYx8xz1eAVCpRtcm");
+              // Define a regex pattern to validate an Ethereum address
+              const addressPattern = /^0x[a-fA-F0-9]{40}$/;
+              const courseId = item?.data?.courseId;
+              
+              if (courseId && addressPattern.test(courseId)) {
+                  const contractBalance = await web3.eth.getBalance(courseId);
+                  console.log("Raw Balance in Wei:", contractBalance); 
+                  setBalance(web3.utils.fromWei(contractBalance, 'ether'));
+              } else {
+                  console.error(`Invalid address: ${courseId}`);
+              }
+          } catch (error) {
+              console.error(`Error fetching balance for address ${item?.data?.courseId}:`, error);
+          }
+      };
+    
+      if (item?.data?.courseId) {
+          fetchBalance();
+      }
+  }, [item?.data?.courseId, courseCompletedEvents, enrolledEvents, roleRevokedEvents, dropoutEvents]);
     
   
 
@@ -350,34 +358,46 @@ export default function CoursesData( item, academyAddress ) {
   }, [isLoadingStudentDeposit, paymentStatusEvents, uri]);
   
   useEffect(() => {
-    const newStatus = { ...studentStatus };
-  
-        if (enrolledEvents) {
-          enrolledEvents.forEach(e => {
-            if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
-              newStatus[e.data.account] = { status: "inProgress", blockNumber: e.transaction.blockNumber };
-            }
-          });
-        }
-      
-        if (courseCompletedEvents) {
-          courseCompletedEvents.forEach(e => {
-            if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
-              newStatus[e.data.account] = { status: "passed", blockNumber: e.transaction.blockNumber };
-            }
-          });
-        }
-      
-        if (dropoutEvents) {
-          dropoutEvents.forEach(e => {
-            if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
-              newStatus[e.data.account] = { status: "failed", blockNumber: e.transaction.blockNumber };
-            }
-          });
-        }
-      
-        setStudentStatus(newStatus);
-      }, [enrolledEvents, courseCompletedEvents, dropoutEvents]);
+  const newStatus = { ...studentStatus };
+
+  if (enrolledEvents) {
+    enrolledEvents.forEach(e => {
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "inProgress", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  if (courseCompletedEvents) {
+    courseCompletedEvents.forEach(e => {
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "passed", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  if (dropoutEvents) {
+    dropoutEvents.forEach(e => {
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "failed", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  // Handle role revoked events
+  if (roleRevokedEvents) {
+    roleRevokedEvents.forEach(e => {
+      // Assuming e.data.account is the student's account and you're checking for a specific role,
+      // adjust the logic here if the event structure is different
+      if (!newStatus[e.data.account] || e.transaction.blockNumber > newStatus[e.data.account].blockNumber) {
+        newStatus[e.data.account] = { status: "withdrawn", blockNumber: e.transaction.blockNumber };
+      }
+    });
+  }
+
+  setStudentStatus(newStatus);
+}, [enrolledEvents, courseCompletedEvents, dropoutEvents, roleRevokedEvents]);
+
 
       useEffect(() => {
         const inProgress = [];
@@ -395,10 +415,15 @@ export default function CoursesData( item, academyAddress ) {
             case "failed":
               failed.push(student);
               break;
+            // Withdrawn students are not added to any list
+            case "withdrawn":
+              // Optionally handle withdrawn students
+              break;
             default:
               break;
           }
         });
+        
       
         setStudentsInProgress(inProgress);
         setStudentsPassed(passed);
@@ -444,10 +469,10 @@ export default function CoursesData( item, academyAddress ) {
       }
     };
   
-    const uploadFile = async (courseTitle, description, timeCommitment, startDateTime, calendarLink, pdfData, imageData) => {
+    const uploadFile = async (courseTitle, description, timeCommitment, startDateTime, courseType, calendarLink, courseLink, pdfData, imageData) => {
       try {
         // Validate that all required information is present
-        if (!courseTitle || !description || !timeCommitment || !startDateTime || !pdfData || !imageData) {
+        if (!courseTitle || !description || !timeCommitment || !startDateTime || !courseType || !courseLink || !pdfData || !imageData) {
           throw new Error("Missing required course information");
         }
     
@@ -457,7 +482,9 @@ export default function CoursesData( item, academyAddress ) {
             description: description,
             timeCommitment: timeCommitment,
             startDate: startDateTime,
+            courseType: courseType,
             calendarLink: calendarLink,
+            courseLink: courseLink,
             syllabus: pdfData,
             image: imageData
           }
@@ -468,8 +495,6 @@ export default function CoursesData( item, academyAddress ) {
         return courseInfo;
       } catch (error) {
         console.error("Failed to upload file:", error);
-        setErrorMessage(error.message); // set error message
-        setIsModalOpen(true); // open error modal
       }
     };
     
@@ -483,19 +508,18 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
     console.log("initData:", initData);
   
-    const setPaymentCall = async (courseTitle, description, timeCommitment, startDateTime, calendarLink, pdfData, imageData, paymentAmountInWei) => {
+    const setPaymentCall = async (courseTitle, description, timeCommitment, startDateTime, courseType, calendarLink, courseLink, pdfData, imageData, paymentAmountInWei) => {
       try {
         // Upload the file and get the course info
         let courseInfo;
         try {
-          courseInfo = await uploadFile(courseTitle, description, timeCommitment, startDateTime, calendarLink, pdfData, imageData);
+          courseInfo = await uploadFile(courseTitle, description, timeCommitment, startDateTime, courseType, calendarLink, courseLink, pdfData, imageData);
         } catch (err) {
           console.error("Failed to upload file:", err);
           let errorReason;
@@ -504,8 +528,7 @@ export default function CoursesData( item, academyAddress ) {
           } else {
               errorReason = err.message;
           }
-          setErrorMessage(errorReason);
-        setIsModalOpen(true);
+          showErrorModal(errorReason); 
           return;
         }
       
@@ -527,8 +550,7 @@ export default function CoursesData( item, academyAddress ) {
           } else {
               errorReason = err.message;
           }
-          setErrorMessage(errorReason);
-        setIsModalOpen(true);
+          showErrorModal(errorReason); 
       }
     };
     
@@ -545,8 +567,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (error) {
         console.error("contract call failure", error);
         const errorReason = error.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -563,8 +584,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -575,8 +595,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -588,8 +607,11 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        console.log("errorReason", errorReason);
+
+        // Log to check if showErrorModal is a function
+        console.log("showErrorModal is a function:", typeof showErrorModal === "function");
+        showErrorModal(errorReason); 
       }
     }
   
@@ -600,8 +622,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
     
@@ -613,8 +634,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -626,8 +646,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -638,8 +657,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   
@@ -668,8 +686,7 @@ export default function CoursesData( item, academyAddress ) {
       } catch (err) {
         console.error("contract call failure", err);
         const errorReason = err.message.split('Reason: ')[1].split('╔')[0].trim();
-        setErrorMessage(errorReason);
-        setIsModalOpen(true);
+        showErrorModal(errorReason); 
       }
     }
   

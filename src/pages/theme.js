@@ -5,6 +5,11 @@ export default extendTheme({
   colorSchemes: {
     light: {
       palette: {
+        bg: {
+          main: '#f5f5f5', // Example background color
+          light: '#ffffff', // Lighter shade
+          dark: '#e0e0e0', // Darker shade
+        },
         primary: {
           50: '#F2F7FF',
           100: '#DCEBFE',

@@ -19,6 +19,8 @@ import Resources from './pages/Resources';
 import Report from './pages/Report';
 import feather from 'feather-icons';
 import { Reviews } from "@mui/icons-material";
+import { ErrorModalProvider } from './utils/ErrorModalContext';
+import ErrorModal from './components/ErrorModal';
 
 const useEnhancedEffect = typeof window !== 'undefined' ? useEffect : useEffect;
 
@@ -35,6 +37,8 @@ function App() {
 }, []);
 
   return (
+    <ErrorModalProvider>
+      <ErrorModal />
     <CssVarsProvider disableTransitionOnChange>   
       <Router>
         <GlobalStyles styles={(theme) => ({'[data-feather], .feather': {
@@ -61,6 +65,7 @@ function App() {
         </Box>
       </Router>
     </CssVarsProvider>
+    </ErrorModalProvider>
   );
 }
 

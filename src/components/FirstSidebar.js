@@ -36,7 +36,7 @@ import { ConnectWallet } from "@thirdweb-dev/react";
 import { styled } from '@mui/material/styles';
 import { deepPurple } from '@mui/material/colors';
 import Tooltip from '@mui/material/Tooltip';
-
+import PestControlIcon from '@mui/icons-material/PestControl';
 
 const StyledAvatar = styled(Avatar)`
   ${({ theme }) => `
@@ -60,6 +60,14 @@ export default function FirstSidebar() {
   const [index, setIndex] = React.useState(0);
   const [layout, setLayout] = React.useState(undefined);
 
+  const handleAIntClick = () => {
+    window.open('https://chat.openai.com/g/g-YZxdmcTkm-syllabus-builder', '_blank');
+  };
+
+  const handleTicClick = () => {
+    window.open('https://discord.gg/fEPxcMaybB', '_blank');
+  };
+
   
   React.useEffect(() => {
     switch (location.pathname) {
@@ -78,7 +86,7 @@ export default function FirstSidebar() {
       case '/report':
           setIndex(4);
           break;           
-      case '/profile':
+      case '/review':
         setIndex(5);
         break;
       default:
@@ -132,38 +140,50 @@ export default function FirstSidebar() {
       >
         <i data-feather="arrow-left" />
       </IconButton>
-      <Avatar src="https://github.com/Peace-Antz/academyv2/blob/2421cbb0800acc1e9ae0a02f106a9cd0de229202/src/assets/images/peaceantz%20square%20small.png?raw=true" />
+      <Avatar src={PeaceAntzLogo}  />
       <List sx={{ '--ListItem-radius': '8px', '--List-gap': '12px' }}>
       <ListItem>
+        <Tooltip title="Home" variant="plain" placement="right">
           <ListItemButton selected={index === 0} onClick={() => setIndex(0)} component={Link} to="/hero">
             <i data-feather="home" />
           </ListItemButton>
+        </Tooltip>
         </ListItem>
         <ListItem>
+        <Tooltip title="Courses" variant="plain" placement="right">
           <ListItemButton selected={index === 1} onClick={() => setIndex(1)} component={Link} to="/courses">
             <i data-feather="layers" />
           </ListItemButton>
+        </Tooltip>
         </ListItem>
         <ListItem>
+        <Tooltip title="Rankings (Coming Soon!)" variant="plain" placement="right">
           <ListItemButton selected={index === 2} onClick={() => setIndex(2)} component={Link} to="/rank" >
             <i data-feather="bar-chart-2" />
           </ListItemButton>
+        </Tooltip>
         </ListItem>
         <ListItem>
+        <Tooltip title="Resources" variant="plain" placement="right">
           <ListItemButton selected={index === 3} onClick={() => setIndex(3)} component={Link} to="/resources">
             <i data-feather="check-square" />
           </ListItemButton>
+        </Tooltip>
         </ListItem>
 
         <ListItem>
+        <Tooltip title="Report (Coming Soon!)" variant="plain" placement="right">
           <ListItemButton selected={index === 4} onClick={() => setIndex(4)} component={Link} to="/report">
             <i data-feather="flag" />
           </ListItemButton>
+        </Tooltip>
         </ListItem>
         <ListItem>
+        <Tooltip title="Review (Coming Soon!)" variant="plain" placement="right">
           <ListItemButton selected={index === 5} onClick={() => setIndex(5)} component={Link} to="/review">
             <i data-feather="users" />
           </ListItemButton>
+         </Tooltip>
         </ListItem>
       </List>
       <List
@@ -174,18 +194,35 @@ export default function FirstSidebar() {
           '--List-gap': '8px',
         }}
       >
-        <ColorSchemeToggle sx={{ display: {  md: 'inline-flex' } }} />
+        
         {/* <ListItem>
           <ListItemButton>
             <i data-feather="life-buoy" />
           </ListItemButton>
-        </ListItem>
+        </ListItem>*/}
         <ListItem>
-          <ListItemButton>
-            <i data-feather="settings" />
+        <Tooltip title="Report a Tic (We like Bugz because we like ourselves!)" variant="plain" placement="right">
+          <ListItemButton onClick={handleTicClick}>
+            <PestControlIcon />
           </ListItemButton>
-        </ListItem> */}
+        </Tooltip>
+        </ListItem>
+
+        <ColorSchemeToggle sx={{ display: {  md: 'inline-flex' } }} />
+
       </List>
+      <Tooltip title="Use AI" variant="plain" placement="right">
+        <IconButton
+          aria-controls={'composition-menu'}
+          aria-haspopup="true"
+          variant="soft"
+          color="inherit"
+          onClick={handleAIntClick}
+         >
+          <StyledAvatar alt="AI Ant" src="https://github.com/Peace-Antz/academyv2/blob/d438d9694bbcb0cdfe0a3a6d9423f456229b3cb4/src/assets/images/aiant.png?raw=true" />
+      </IconButton>
+      </Tooltip>
+      <Tooltip title="Profile (Coming Soon)" variant="plain" placement="right">
       <IconButton
         aria-controls={'composition-menu'}
         aria-haspopup="true"
@@ -207,6 +244,7 @@ export default function FirstSidebar() {
           />
         </Badge>
       </IconButton>
+      </Tooltip>
     </Sheet>
   );
 }

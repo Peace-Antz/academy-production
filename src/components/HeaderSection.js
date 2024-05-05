@@ -4,8 +4,15 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { ConnectWallet } from "@thirdweb-dev/react";
+import {  useChainId } from "@thirdweb-dev/react";
+import { Polygon } from "@thirdweb-dev/chains";
 
 export default function HeaderSection({createCourseCall}) {
+
+  const chainId = useChainId();
+  const activeChain = Polygon;
+  const isDisabled = chainId !== activeChain.chainId;
+
   return React.createElement(
     Stack,
     {
@@ -65,6 +72,7 @@ export default function HeaderSection({createCourseCall}) {
         {
           variant: 'solid',
           color: 'primary',
+          disabled: isDisabled,
           startDecorator: <AutoAwesomeIcon />,
           onClick: createCourseCall,
         },

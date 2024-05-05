@@ -119,6 +119,7 @@ contract CourseFactory is AccessControl {
         rank.totalLocked = rank.totalLocked.sub(stake);
         academyInfo.totalStaked = academyInfo.totalStaked.sub(stake);
         academyInfo.tvl = academyInfo.tvl.sub(stake);
+        academyInfo.failFund = academyInfo.failFund.add(stake);
     }
 
     function updateWithdraw(address student, uint stake) external isValid{
@@ -181,7 +182,7 @@ contract CourseFactory is AccessControl {
         }
     }
 
-    function updateSponsorship(address sponsor, address courseAddress, uint value) external isValid {
+    function updateSponsorship(address sponsor, address courseAddress, address teacher, uint value) external isValid {
         SponsorRank storage rank = sponsorRank[sponsor];
 
         // Check if the course has already been sponsored by this sponsor
@@ -192,16 +193,24 @@ contract CourseFactory is AccessControl {
 
         rank.totalSponsored = rank.totalSponsored.add(value);
         rank.pendingPayouts = rank.pendingPayouts.add(value);
+         // If the sponsor is the teacher, update the selfSponsored amount
+        if (sponsor == teacher) {
+            rank.selfSponsored = rank.selfSponsored.add(value);
+        }
         academyInfo.tvl = academyInfo.tvl.add(value);
         academyInfo.totalSponsored = academyInfo.totalSponsored.add(value);
     }
 
-    function updateUnsponsor(address sponsor, uint value) external isValid {
+    function updateUnsponsor(address sponsor, address teacher, uint value) external isValid {
         SponsorRank storage rank = sponsorRank[sponsor];
         rank.totalSponsored = rank.totalSponsored.sub(value);
         rank.pendingPayouts = rank.pendingPayouts.sub(value);
         if (value == rank.totalSponsored) {
             rank.coursesSponsored = rank.coursesSponsored.sub(1);
+        }
+           // Decrease selfSponsored if the sponsor is the teacher
+        if (sponsor == teacher) {
+            rank.selfSponsored = rank.selfSponsored.sub(value);
         }
         academyInfo.tvl = academyInfo.tvl.sub(value);
         academyInfo.totalSponsored = academyInfo.totalSponsored.sub(value);
