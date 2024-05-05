@@ -1346,7 +1346,7 @@ const formatBalance = (balance) => {
                       },
                       zIndex: 1000,
                   },
-                  maticNeeded + ' MATIC needed to start course'
+                  maticNeeded + ' MATIC needed for course sponsorship'
               )
           ),
       ),
