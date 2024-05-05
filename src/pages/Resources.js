@@ -5,6 +5,7 @@ import AccordionGroup from '@mui/joy/AccordionGroup';
 import Accordion from '@mui/joy/Accordion';
 import AccordionDetails from '@mui/joy/AccordionDetails';
 import AccordionSummary from '@mui/joy/AccordionSummary';
+import { Link as RouterLink } from 'react-router-dom';
 
 function AcademyResourceCenter() {
   return (
@@ -32,7 +33,8 @@ function AcademyResourceCenter() {
         <Typography>
           Follow these steps to enroll in a course:
           <ol>
-            <li>Connect your wallet to the Dapp (Courses Page). Need a web3 wallet? Download <Link href="https://metamask.io/download.html" target="_blank">Metamask</Link> or <Link href="https://www.coinbase.com/wallet/downloads" target="_blank">Coinbase Wallet</Link>. You can also check out <Link href="https://learn.metamask.io/" target="_blank">Metamask Learn</Link> for a fantastic introduction to web3!</li>
+            <li>Connect your wallet to the Dapp (<RouterLink to="/courses">Courses Page</RouterLink>- button on top right corner). Need a web3 wallet? Download <Link href="https://metamask.io/download.html" target="_blank">Metamask</Link> or <Link href="https://www.coinbase.com/wallet/downloads" target="_blank">Coinbase Wallet</Link>. You can also check out <Link href="https://www.youtube.com/watch?v=-HTubEJ61zU" target="_blank">this video</Link> for a quick primer on Metamask!</li>
+            <li>Fund wallet with MATIC. (You can use Coinbase, Binance, or whatever exchange you prefer to send MATIC to your wallet)</li>
             <li>Scroll down and check out the titles and descriptions of the courses, if one interests you, open up the syllabus to see the details by clicking somewhere on the course of interest.</li>
             <li>Check out the date and time commitment. If you can attend the course, click "Enroll", and confirm the transaction to stake the enrollment fee (you can withdraw this before the course starts, once the course starts, your stake will be locked up until you pass the class).</li>
             <li>Once the course has started, you must "Dropout" to leave the course, however, you will not receive the stake back, but will get a "dropout" rather than a "boot" on your record.</li>
